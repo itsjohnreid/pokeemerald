@@ -4388,8 +4388,8 @@ bool16 HasAllHoennMons(void)
 {
     u16 i;
 
-    // -2 excludes Jirachi and Deoxys
-    for (i = 0; i < HOENN_DEX_COUNT - 2; i++)
+    // Just checks if you have all Hoenn starters
+    for (i = 0; i < 9; i++)
     {
         if (!GetSetPokedexFlag(HoennToNationalOrder(i + 1), FLAG_GET_CAUGHT))
             return FALSE;

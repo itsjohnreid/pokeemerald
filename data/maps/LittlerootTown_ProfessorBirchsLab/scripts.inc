@@ -86,20 +86,35 @@ LittlerootTown_ProfessorBirchsLab_EventScript_AddRivalObject::
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_SetObjectPosForJohtoStarters::
-	addobject LOCALID_BALL_CYNDAQUIL
-	addobject LOCALID_BALL_TOTODILE
-	addobject LOCALID_BALL_CHIKORITA
 	addobject LOCALID_RIVAL
-	turnobject LOCALID_BALL_CYNDAQUIL, DIR_SOUTH
-	setobjectxy LOCALID_BALL_CYNDAQUIL, 8, 4
-	turnobject LOCALID_BALL_TOTODILE, DIR_SOUTH
-	setobjectxy LOCALID_BALL_TOTODILE, 9, 4
-	turnobject LOCALID_BALL_CHIKORITA, DIR_SOUTH
-	setobjectxy LOCALID_BALL_CHIKORITA, 10, 4
 	turnobject LOCALID_BIRCH, DIR_SOUTH
 	setobjectxy LOCALID_BIRCH, 6, 4
 	turnobject LOCALID_RIVAL, DIR_EAST
 	setobjectxy LOCALID_RIVAL, 5, 5
+	goto_if_unset FLAG_RECEIVED_CYNDAQUIL, LittlerootTown_ProfessorBirchsLab_EventScript_SetObjectPosForCyndaquil
+	goto_if_unset FLAG_RECEIVED_TOTODILE, LittlerootTown_ProfessorBirchsLab_EventScript_SetObjectPosForTotodile
+	goto_if_unset FLAG_RECEIVED_CHIKORITA, LittlerootTown_ProfessorBirchsLab_EventScript_SetObjectPosForChikorita
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_SetObjectPosForCyndaquil::
+	addobject LOCALID_BALL_CYNDAQUIL
+	turnobject LOCALID_BALL_CYNDAQUIL, DIR_SOUTH
+	setobjectxy LOCALID_BALL_CYNDAQUIL, 8, 4
+	goto_if_unset FLAG_RECEIVED_TOTODILE, LittlerootTown_ProfessorBirchsLab_EventScript_SetObjectPosForTotodile
+	goto_if_unset FLAG_RECEIVED_CHIKORITA, LittlerootTown_ProfessorBirchsLab_EventScript_SetObjectPosForChikorita
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_SetObjectPosForTotodile::
+	addobject LOCALID_BALL_TOTODILE
+	turnobject LOCALID_BALL_TOTODILE, DIR_SOUTH
+	setobjectxy LOCALID_BALL_TOTODILE, 9, 4
+	goto_if_unset FLAG_RECEIVED_CHIKORITA, LittlerootTown_ProfessorBirchsLab_EventScript_SetObjectPosForChikorita
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_SetObjectPosForChikorita::
+	addobject LOCALID_BALL_CHIKORITA
+	turnobject LOCALID_BALL_CHIKORITA, DIR_SOUTH
+	setobjectxy LOCALID_BALL_CHIKORITA, 10, 4
 	end
 
 LittlerootTown_ProfessorBirchsLab_OnFrame:
@@ -295,7 +310,6 @@ LittlerootTown_ProfessorBirchsLab_EventScript_AideReceivedStarter::
 
 LittlerootTown_ProfessorBirchsLab_EventScript_Cyndaquil::
 	release
-	goto_if_ge VAR_DEX_UPGRADE_JOHTO_STARTER_STATE, 6, LittlerootTown_ProfessorBirchsLab_EventScript_AlreadyChoseJohtoStarter
 	applymovement LOCALID_BIRCH, Common_Movement_WalkInPlaceFasterRight
 	waitmovement 0
 	showmonpic SPECIES_CYNDAQUIL, 10, 3
@@ -306,7 +320,6 @@ LittlerootTown_ProfessorBirchsLab_EventScript_Cyndaquil::
 
 LittlerootTown_ProfessorBirchsLab_EventScript_Totodile::
 	release
-	goto_if_ge VAR_DEX_UPGRADE_JOHTO_STARTER_STATE, 6, LittlerootTown_ProfessorBirchsLab_EventScript_AlreadyChoseJohtoStarter
 	applymovement LOCALID_BIRCH, Common_Movement_WalkInPlaceFasterRight
 	waitmovement 0
 	showmonpic SPECIES_TOTODILE, 10, 3
@@ -317,7 +330,6 @@ LittlerootTown_ProfessorBirchsLab_EventScript_Totodile::
 
 LittlerootTown_ProfessorBirchsLab_EventScript_Chikorita::
 	release
-	goto_if_ge VAR_DEX_UPGRADE_JOHTO_STARTER_STATE, 6, LittlerootTown_ProfessorBirchsLab_EventScript_AlreadyChoseJohtoStarter
 	applymovement LOCALID_BIRCH, Common_Movement_WalkInPlaceFasterRight
 	waitmovement 0
 	showmonpic SPECIES_CHIKORITA, 10, 3
@@ -348,17 +360,19 @@ LittlerootTown_ProfessorBirchsLab_EventScript_GiveCyndaquil::
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToParty::
-	call LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedJohtoStarter
+	call LittlerootTown_ProfessorBirchsLab_EventScript_ChoseJohtoStarter
+	setflag FLAG_RECEIVED_CYNDAQUIL
 	removeobject LOCALID_BALL_CYNDAQUIL
 	msgbox gText_NicknameThisPokemon, MSGBOX_YESNO
-	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedCyndaquil
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedJohtoStarter
 	call Common_EventScript_GetGiftMonPartySlot
 	call Common_EventScript_NameReceivedPartyMon
-	goto LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedCyndaquil
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedJohtoStarter
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToPC::
-	call LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedJohtoStarter
+	call LittlerootTown_ProfessorBirchsLab_EventScript_ChoseJohtoStarter
+	setflag FLAG_RECEIVED_CYNDAQUIL
 	removeobject LOCALID_BALL_CYNDAQUIL
 	msgbox gText_NicknameThisPokemon, MSGBOX_YESNO
 	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_CyndaquilTransferredToPC
@@ -368,14 +382,7 @@ LittlerootTown_ProfessorBirchsLab_EventScript_SendCyndaquilToPC::
 
 LittlerootTown_ProfessorBirchsLab_EventScript_CyndaquilTransferredToPC::
 	call Common_EventScript_TransferredToPC
-	goto LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedCyndaquil
-	end
-
-LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedCyndaquil::
-	hidemonpic
-	msgbox LittlerootTown_ProfessorBirchsLab_Text_GrassyPatchWaiting, MSGBOX_DEFAULT
-	setvar VAR_DEX_UPGRADE_JOHTO_STARTER_STATE, 6
-	releaseall
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedJohtoStarter
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_GiveTotodile::
@@ -389,17 +396,19 @@ LittlerootTown_ProfessorBirchsLab_EventScript_GiveTotodile::
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToParty::
-	call LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedJohtoStarter
+	call LittlerootTown_ProfessorBirchsLab_EventScript_ChoseJohtoStarter
+	setflag FLAG_RECEIVED_TOTODILE
 	removeobject LOCALID_BALL_TOTODILE
 	msgbox gText_NicknameThisPokemon, MSGBOX_YESNO
-	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedTotodile
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedJohtoStarter
 	call Common_EventScript_GetGiftMonPartySlot
 	call Common_EventScript_NameReceivedPartyMon
-	goto LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedTotodile
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedJohtoStarter
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToPC::
-	call LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedJohtoStarter
+	call LittlerootTown_ProfessorBirchsLab_EventScript_ChoseJohtoStarter
+	setflag FLAG_RECEIVED_TOTODILE
 	removeobject LOCALID_BALL_TOTODILE
 	msgbox gText_NicknameThisPokemon, MSGBOX_YESNO
 	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_TotodileTransferredToPC
@@ -409,14 +418,7 @@ LittlerootTown_ProfessorBirchsLab_EventScript_SendTotodileToPC::
 
 LittlerootTown_ProfessorBirchsLab_EventScript_TotodileTransferredToPC::
 	call Common_EventScript_TransferredToPC
-	goto LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedTotodile
-	end
-
-LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedTotodile::
-	hidemonpic
-	msgbox LittlerootTown_ProfessorBirchsLab_Text_GrassyPatchWaiting, MSGBOX_DEFAULT
-	setvar VAR_DEX_UPGRADE_JOHTO_STARTER_STATE, 6
-	releaseall
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedJohtoStarter
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_GiveChikorita::
@@ -430,17 +432,19 @@ LittlerootTown_ProfessorBirchsLab_EventScript_GiveChikorita::
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_SendChikoritaToParty::
-	call LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedJohtoStarter
+	call LittlerootTown_ProfessorBirchsLab_EventScript_ChoseJohtoStarter
+	setflag FLAG_RECEIVED_CHIKORITA
 	removeobject LOCALID_BALL_CHIKORITA
 	msgbox gText_NicknameThisPokemon, MSGBOX_YESNO
-	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedChikorita
+	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedJohtoStarter
 	call Common_EventScript_GetGiftMonPartySlot
 	call Common_EventScript_NameReceivedPartyMon
-	goto LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedChikorita
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedJohtoStarter
 	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_SendChikoritaToPC::
-	call LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedJohtoStarter
+	call LittlerootTown_ProfessorBirchsLab_EventScript_ChoseJohtoStarter
+	setflag FLAG_RECEIVED_CHIKORITA
 	removeobject LOCALID_BALL_CHIKORITA
 	msgbox gText_NicknameThisPokemon, MSGBOX_YESNO
 	goto_if_eq VAR_RESULT, NO, LittlerootTown_ProfessorBirchsLab_EventScript_ChikoritaTransferredToPC
@@ -450,22 +454,29 @@ LittlerootTown_ProfessorBirchsLab_EventScript_SendChikoritaToPC::
 
 LittlerootTown_ProfessorBirchsLab_EventScript_ChikoritaTransferredToPC::
 	call Common_EventScript_TransferredToPC
-	goto LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedChikorita
+	goto LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedJohtoStarter
 	end
 
-LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedChikorita::
-	hidemonpic
-	msgbox LittlerootTown_ProfessorBirchsLab_Text_GrassyPatchWaiting, MSGBOX_DEFAULT
-	setvar VAR_DEX_UPGRADE_JOHTO_STARTER_STATE, 6
-	releaseall
-	end
-
-LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedJohtoStarter::
+LittlerootTown_ProfessorBirchsLab_EventScript_ChoseJohtoStarter::
 	playfanfare MUS_OBTAIN_ITEM
 	message LittlerootTown_ProfessorBirchsLab_Text_ReceivedJohtoStarter
 	waitmessage
 	waitfanfare
 	return
+
+LittlerootTown_ProfessorBirchsLab_EventScript_ReceivedJohtoStarter::
+	hidemonpic
+	goto_if_unset FLAG_RECEIVED_CHIKORITA, LittlerootTown_ProfessorBirchsLab_EventScript_PickAnotherJohtoStarter
+	goto_if_unset FLAG_RECEIVED_CYNDAQUIL, LittlerootTown_ProfessorBirchsLab_EventScript_PickAnotherJohtoStarter
+	goto_if_unset FLAG_RECEIVED_TOTODILE, LittlerootTown_ProfessorBirchsLab_EventScript_PickAnotherJohtoStarter
+	msgbox LittlerootTown_ProfessorBirchsLab_Text_GrassyPatchWaiting, MSGBOX_DEFAULT
+	setvar VAR_DEX_UPGRADE_JOHTO_STARTER_STATE, 6
+	releaseall
+	end
+
+LittlerootTown_ProfessorBirchsLab_EventScript_PickAnotherJohtoStarter::
+	releaseall
+	end
 
 LittlerootTown_ProfessorBirchsLab_EventScript_Birch::
 	lock
@@ -893,38 +904,35 @@ LittlerootTown_ProfessorBirchsLab_Text_CompletedDexChoosePokemon:
 	.string "I have a gift for you.\p"
 	.string "Consider it my show of appreciation\n"
 	.string "for the fantastic work you've done.\p"
-	.string "My gift is a rare POKéMON only found\n"
-	.string "in another region!\p"
-	.string "You can have any one of these\n"
-	.string "three POKéMON!$"
+	.string "My gift is some rare POKéMON only\n"
+	.string "found in another region!\p"
+	.string "You can have all three!$"
 
 LittlerootTown_ProfessorBirchsLab_Text_CanHaveAnyOneOfRarePokemon:
 	.string "PROF. BIRCH: These are rare POKéMON\n"
 	.string "only found in another region!\p"
-	.string "You can have any one of these\n"
-	.string "three POKéMON!$"
+	.string "You can have all three!$"
 
 LittlerootTown_ProfessorBirchsLab_Text_YoullTakeCyndaquil:
 	.string "PROF. BIRCH: The FIRE POKéMON\n"
 	.string "CYNDAQUIL caught your eye!\p"
 	.string "You're as sharp as ever!\p"
-	.string "So the CYNDAQUIL is your choice?$"
+	.string "So, you'll take the CYNDAQUIL?$"
 
 LittlerootTown_ProfessorBirchsLab_Text_YoullTakeTotodile:
 	.string "PROF. BIRCH: The WATER POKéMON\n"
-	.string "TOTODILE is your choice!\p"
+	.string "TOTODILE caught your eye!\p"
 	.string "You know how to pick a good one.\p"
 	.string "So, you'll take the TOTODILE?$"
 
 LittlerootTown_ProfessorBirchsLab_Text_YoullTakeChikorita:
 	.string "PROF. BIRCH: The GRASS POKéMON\n"
-	.string "CHIKORITA is your choice!\p"
+	.string "CHIKORITA caught your eye!\p"
 	.string "You sure know what you're doing.\p"
 	.string "So, you'll take the CHIKORITA?$"
 
 LittlerootTown_ProfessorBirchsLab_Text_TakeYourTimeAllInvaluable:
-	.string "PROF. BIRCH: Take your time before\n"
-	.string "you decide.\p"
+	.string "PROF. BIRCH: Take your time.\p"
 	.string "They're all invaluable POKéMON.$"
 
 @ Unused

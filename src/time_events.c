@@ -41,12 +41,17 @@ void UpdateMirageRnd(u16 days)
 
 bool8 IsMirageIslandPresent(void)
 {
-    u16 rnd = GetMirageRnd() >> 16;
+    u16 rnd = (GetMirageRnd() >> 25) & 0x03; // Increase the shift by 9 and mask to only check the first four bits.
     int i;
 
     for (i = 0; i < PARTY_SIZE; i++)
-        if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES) && (GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY) & 0xFFFF) == rnd)
+    {
+        if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES) && 
+            (((GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY) & 0xFFFF) >> 9) & 0x03) == rnd)
+        {
             return TRUE;
+        }
+    }
 
     return FALSE;
 }

@@ -1615,8 +1615,8 @@ static bool32 UpdateRandomTrainerRematches(const struct RematchTrainer *table, u
                 // Trainer already wants a rematch. Don't bother updating it.
                 ret = TRUE;
             }
-            else if (FlagGet(TRAINER_REGISTERED_FLAGS_START + i)
-             && (Random() % 100) <= 30)  // 31% chance of getting a rematch.
+
+            else if (FlagGet(TRAINER_REGISTERED_FLAGS_START + i))
             {
                 SetRematchIdForTrainer(table, i);
                 ret = TRUE;

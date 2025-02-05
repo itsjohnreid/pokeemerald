@@ -9563,6 +9563,7 @@ const union {
         .ATTRACT = TRUE,
         .CUT = TRUE,
         .ROCK_SMASH = TRUE,
+        .DIVE = TRUE,
     } },
 
     [SPECIES_ARMALDO] = { .learnset = {
@@ -9589,6 +9590,7 @@ const union {
         .CUT = TRUE,
         .STRENGTH = TRUE,
         .ROCK_SMASH = TRUE,
+        .DIVE = TRUE,
     } },
 
     [SPECIES_RALTS] = { .learnset = {

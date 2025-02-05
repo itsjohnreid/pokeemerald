@@ -274,6 +274,10 @@ bool8 AddBagItem(u16 itemId, u16 count)
                 {
                     // successfully added to already existing item's count
                     SetBagItemQuantity(&newItems[i].quantity, ownedCount + count);
+                    // reset to 1 if acquiring multiple of a key item
+                    if (pocket == KEYITEMS_POCKET) {
+                        SetBagItemQuantity(&newItems[i].quantity, 1);
+                    }
                     memcpy(itemPocket->itemSlots, newItems, itemPocket->capacity * sizeof(struct ItemSlot));
                     Free(newItems);
                     return TRUE;
